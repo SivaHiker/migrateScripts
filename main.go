@@ -30,8 +30,8 @@ func main() {
 			break
 		}
 		var userd userDetails
-		fmt.Printf(" > Read %d characters\n", len(line))
-		fmt.Println(line)
+		//fmt.Printf(" > Read %d characters\n", len(line))
+		//fmt.Println(line)
 		uservalues := strings.Split(line,"+")
 		uid := uservalues[0]
         //msisdn := uservalues[1]
@@ -47,8 +47,9 @@ func main() {
 		if(err!=nil){
 			fmt.Println("Not able to query the uid in the DB -->",uid,err)
 		}
-		rows.Scan(&userd)
+		rows.Scan(&userd.Msisdn,&userd.DeviceKey)
 		fmt.Println(userd.Msisdn)
+		fmt.Println(userd.DeviceKey)
 
 	}
 
