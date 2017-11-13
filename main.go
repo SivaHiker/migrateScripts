@@ -29,7 +29,7 @@ func main() {
 		if err != nil {
 			break
 		}
-		var userd userDetails
+		var msidsn int64
 		//fmt.Printf(" > Read %d characters\n", len(line))
 		//fmt.Println(line)
 		uservalues := strings.Split(line,"+")
@@ -42,14 +42,14 @@ func main() {
 			fmt.Println(err.Error())
 		}
 		uid="WcIvzE_log90rBhX"
-        fmt.Println("select * from devices where  uid=\""+uid+"\"")
+        fmt.Println("select msisdn from devices where  uid=\""+uid+"\"")
 		rows,err := dbConn.Query("select * from devices where  uid=\""+uid+"\"")
 		if(err!=nil){
 			fmt.Println("Not able to query the uid in the DB -->",uid,err)
 		}
-		rows.Scan(&userd.Msisdn,&userd.DeviceKey)
-		fmt.Println(userd.Msisdn)
-		fmt.Println(userd.DeviceKey)
+		rows.Scan(&msidsn)
+		fmt.Println(msidsn)
+		//fmt.Println(userd.DeviceKey)
 
 	}
 
