@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	file, err := os.Open("/Users/siva/Downloads/LatestAppOpenUsers_20170512_to_20171107.txt")
+	file, err := os.Open("/home/siva/LatestAppOpenUsers_20170512_to_20171107.txt")
 	defer file.Close()
 
 	if err != nil {
@@ -29,7 +29,7 @@ func main() {
 		if err != nil {
 			break
 		}
-		var str string
+		var userd userDetails
 		fmt.Printf(" > Read %d characters\n", len(line))
 		fmt.Println(line)
 		uservalues := strings.Split(line,"+")
@@ -47,8 +47,8 @@ func main() {
 		if(err!=nil){
 			fmt.Println("Not able to query the uid in the DB -->",uid,err)
 		}
-		rows.Scan(str)
-		fmt.Println(str)
+		rows.Scan(&userd)
+		fmt.Println(userd.Msisdn)
 
 	}
 
