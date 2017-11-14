@@ -10,7 +10,6 @@ import (
 	"strings"
 	_ "github.com/go-sql-driver/mysql"
 	"strconv"
-	"os/user"
 )
 
 func main() {
