@@ -22,6 +22,14 @@ func main() {
 		println(err)
 	}
 
+	dbConn := getDBConnection()
+	dbConn.SetMaxOpenConns(10000)
+
+	defer dbConn.Close()
+	err = dbConn.Ping()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	// Start reading from the file with a reader.
 	reader := bufio.NewReader(file)
 
@@ -52,13 +60,8 @@ func main() {
 		uservalues := strings.Split(line,"+")
 		uid := uservalues[0]
         //msisdn := uservalues[1]
-        dbConn := getDBConnection()
-		dbConn.SetMaxOpenConns(10000)
-        defer dbConn.Close()
-		err = dbConn.Ping()
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+
+
 		uid="WcIvzE_log90rBhX"
         fmt.Println("select * from devices where  uid=\""+uid+"\"")
 		rows,err := dbConn.Query("select * from devices where  uid=\""+uid+"\"")
