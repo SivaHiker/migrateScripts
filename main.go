@@ -106,6 +106,7 @@ func ToString(s sql.NullString) string {
 		valInString = "NULL"
 		fmt.Println(valInString)
 	}
+	return valInString
 }
 
 type userDetails struct {
