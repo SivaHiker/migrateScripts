@@ -55,10 +55,14 @@ func main() {
 		if(err!=nil){
 			fmt.Println("Not able to query the uid in the DB -->",uid,err)
 		}
-		rows.Scan(&userd.Token,&userd.Msisdn,&userd.UID,&userd.AppVersion,&userd.DeviceKey,&userd.DevID,
-			   &userd.RegTime,&userd.DevToken,&userd.DevTokenUpdateTs,&userd.DevVersion,&userd.DevType,&userd.Os,
-			   	&userd.OsVersion,&userd.UpgradeTime,&userd.LastActivityTime,&userd.AttributeBits,&userd.Sound,&userd.EndTime,
-			   		&userd.OriginalAppVersion,&userd.Operator,&userd.Resolution,&userd.Circle,&userd.Pdm)
+
+		if(rows.Next()) {
+			err := rows.Scan(&userd.Token, &userd.Msisdn, &userd.UID, &userd.AppVersion, &userd.DeviceKey, &userd.DevID,
+				&userd.RegTime, &userd.DevToken, &userd.DevTokenUpdateTs, &userd.DevVersion, &userd.DevType, &userd.Os,
+				&userd.OsVersion, &userd.UpgradeTime, &userd.LastActivityTime, &userd.AttributeBits, &userd.Sound, &userd.EndTime,
+				&userd.OriginalAppVersion, &userd.Operator, &userd.Resolution, &userd.Circle, &userd.Pdm)
+			fmt.Println(err)
+		}
         //userValues ={userd.Token,userd.Msisdn,userd.UID,userd.AppVersion,userd.DeviceKey,userd.DevID,
 			//userd.RegTime,userd.DevToken,userd.DevTokenUpdateTs,userd.DevVersion,userd.DevType,userd.Os,
 			//userd.OsVersion,userd.UpgradeTime,userd.LastActivityTime,userd.AttributeBits,userd.Sound,userd.EndTime,
