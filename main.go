@@ -71,9 +71,24 @@ func main() {
 		msisdn := strconv.FormatInt(int64(userd.Msisdn), 10)
 		upgradetime := strconv.FormatInt(int64(userd.UpgradeTime), 10)
 		fmt.Println(userd.Sound)
-		fmt.Println(userd.Sound.String)
+		var sound string
+		var token string
+		if(userd.Sound.Valid) {
+			sound = userd.Sound.String
+			fmt.Println(sound)
+		} else {
+			sound = "NULL"
+			fmt.Println(sound)
+		}
+		if(userd.Token.Valid) {
+			sound = userd.Token.String
+			fmt.Println(token)
+		} else {
+			sound = "NULL"
+			fmt.Println(token)
+		}
 
-		outputfile.WriteString(userd.Token+"::"+msisdn+"::"+userd.Sound.String+"::"+upgradetime+"\n")
+		outputfile.WriteString(token+"::"+msisdn+"::"+sound+"::"+upgradetime+"\n")
 
 	}
 
@@ -89,6 +104,10 @@ func getDBConnection() *sql.DB{
 		fmt.Println(err)
 	}
 	return db
+}
+
+func ToNullString(s string) sql.NullString {
+	return sql.NullString{String : s, Valid : s != ""}
 }
 
 type userDetails struct {
@@ -112,7 +131,7 @@ type userDetails struct {
 	RegTime            int64    `json:"reg_time"`
 	Resolution         string `json:"resolution"`
 	Sound              sql.NullString `json:"sound"`
-	Token              string `json:"token"`
+	Token              sql.NullString `json:"token"`
 	UID                string `json:"uid"`
 	UpgradeTime        int64    `json:"upgrade_time"`
 }
