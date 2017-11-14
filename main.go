@@ -37,7 +37,7 @@ func main() {
 	}
 	defer csvfile.Close()
 
-	writer := csv.NewWriter(file)
+	writer := csv.NewWriter(csvfile)
 	defer writer.Flush()
 
 	var line string
@@ -103,9 +103,11 @@ func main() {
 		for _, value := range records {
 			err := writer.Write(value)
 			if(err!=nil){
+				fmt.Println(err.Error())
 				fmt.Println("Not able to write the records into csv file")
 			}
 		}
+		rows.Close()
 	}
 
 	if err != io.EOF {
