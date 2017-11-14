@@ -68,8 +68,8 @@ func main() {
 			//userd.OsVersion,userd.UpgradeTime,userd.LastActivityTime,userd.AttributeBits,userd.Sound,userd.EndTime,
 			//userd.OriginalAppVersion,userd.Operator,userd.Resolution,userd.Circle,userd.Pdm}
 
-		outputfile.WriteString(ToString(userd.Token)+"::+"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.
-			Sound)+"::"+ToIntegerVal(userd.UpgradeTime)+"\n")
+		//outputfile.WriteString(ToString(userd.Token)+"::+"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.
+		//	Sound)+"::"+ToIntegerVal(userd.UpgradeTime)+"\n")
 
 		outputfile.WriteString(ToString(userd.Token)+"::"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.UID)+"::"+
 		ToString(userd.AppVersion)+"::"+ToString(userd.DeviceKey)+"::"+ToString(userd.DevID)+"::"+ToIntegerVal(userd.
@@ -78,7 +78,7 @@ func main() {
 		ToIntegerVal(userd.UpgradeTime)+"::"+ToIntegerVal(userd.LastActivityTime)+"::"+ToStringFromInt(userd.
 			AttributeBits)+"::"+ToString(userd.Sound)+"::"+ToIntegerVal(userd.EndTime)+"::"+ ToString(userd.
 				OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
-					Pdm)
+					Pdm+"\n")
 
 	}
 
