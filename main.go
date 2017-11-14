@@ -68,27 +68,8 @@ func main() {
 			//userd.OsVersion,userd.UpgradeTime,userd.LastActivityTime,userd.AttributeBits,userd.Sound,userd.EndTime,
 			//userd.OriginalAppVersion,userd.Operator,userd.Resolution,userd.Circle,userd.Pdm}
 
-		msisdn := strconv.FormatInt(int64(userd.Msisdn), 10)
-		upgradetime := strconv.FormatInt(int64(userd.UpgradeTime), 10)
-		fmt.Println(userd.Sound)
-		var sound string
-		var token string
-		if(userd.Sound.Valid) {
-			sound = userd.Sound.String
-			fmt.Println(sound)
-		} else {
-			sound = "NULL"
-			fmt.Println(sound)
-		}
-		if(userd.Token.Valid) {
-			token = userd.Token.String
-			fmt.Println(token)
-		} else {
-			token = "NULL"
-			fmt.Println(token)
-		}
-
-		outputfile.WriteString(token+"::"+msisdn+"::"+sound+"::"+upgradetime+"\n")
+		outputfile.WriteString(ToString(userd.Token)+"::"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.
+			Sound)+"::"+ToIntegerVal(userd.UpgradeTime)+"\n")
 
 	}
 
@@ -110,28 +91,45 @@ func ToNullString(s string) sql.NullString {
 	return sql.NullString{String : s, Valid : s != ""}
 }
 
+func ToIntegerVal(i int64) string {
+	var valueInt string
+	valueInt = strconv.FormatInt(int64(i), 10)
+	return valueInt
+}
+
+func ToString(s sql.NullString) string {
+	var valInString string
+	if(s.Valid) {
+		valInString = s.String
+		fmt.Println(valInString)
+	} else {
+		valInString = "NULL"
+		fmt.Println(valInString)
+	}
+}
+
 type userDetails struct {
-	AppVersion         string `json:"app_version"`
+	AppVersion         sql.NullString `json:"app_version"`
 	AttributeBits      int    `json:"attributeBits"`
 	Circle             int    `json:"circle"`
-	DevID              string `json:"dev_id"`
-	DevToken           string `json:"dev_token"`
+	DevID              sql.NullString `json:"dev_id"`
+	DevToken           sql.NullString `json:"dev_token"`
 	DevTokenUpdateTs   int64    `json:"dev_token_update_ts"`
-	DevType            string `json:"dev_type"`
-	DevVersion         string `json:"dev_version"`
-	DeviceKey          string `json:"device_key"`
+	DevType            sql.NullString `json:"dev_type"`
+	DevVersion         sql.NullString `json:"dev_version"`
+	DeviceKey          sql.NullString `json:"device_key"`
 	EndTime            int64    `json:"end_time"`
 	LastActivityTime   int64    `json:"last_activity_time"`
 	Msisdn             int64    `json:"msisdn"`
 	Operator           string `json:"operator"`
-	OriginalAppVersion string `json:"original_app_version"`
-	Os                 string `json:"os"`
-	OsVersion          string `json:"os_version"`
+	OriginalAppVersion sql.NullString `json:"original_app_version"`
+	Os                 sql.NullString `json:"os"`
+	OsVersion          sql.NullString `json:"os_version"`
 	Pdm                string `json:"pdm"`
 	RegTime            int64    `json:"reg_time"`
 	Resolution         string `json:"resolution"`
 	Sound              sql.NullString `json:"sound"`
 	Token              sql.NullString `json:"token"`
-	UID                string `json:"uid"`
+	UID                sql.NullString `json:"uid"`
 	UpgradeTime        int64    `json:"upgrade_time"`
 }
