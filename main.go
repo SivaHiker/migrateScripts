@@ -81,10 +81,10 @@ func main() {
 			fmt.Println(sound)
 		}
 		if(userd.Token.Valid) {
-			sound = userd.Token.String
+			token = userd.Token.String
 			fmt.Println(token)
 		} else {
-			sound = "NULL"
+			token = "NULL"
 			fmt.Println(token)
 		}
 
