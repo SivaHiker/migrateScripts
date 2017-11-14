@@ -11,6 +11,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"strconv"
 	"encoding/csv"
+	"time"
 )
 
 func main() {
@@ -43,10 +44,11 @@ func main() {
 	if(err!=nil){
 		fmt.Println("Not able to create a csv file")
 	}
-	defer csvfile.Close()
 
 	writer := csv.NewWriter(csvfile)
 	defer writer.Flush()
+	defer csvfile.Close()
+	limiter := time.Tick(time.Nanosecond * 1000000)
 
 	var line string
 	for {
@@ -59,11 +61,11 @@ func main() {
 		//fmt.Println(line)
 		uservalues := strings.Split(line,"+")
 		uid := uservalues[0]
-        //msisdn := uservalues[1]
 
 
 		uid="WcIvzE_log90rBhX"
         fmt.Println("select * from devices where  uid=\""+uid+"\"")
+        <-limiter
 		rows,err := dbConn.Query("select * from devices where  uid=\""+uid+"\"")
 		if(err!=nil){
 			fmt.Println("Not able to query the uid in the DB -->",uid,err)
