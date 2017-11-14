@@ -10,6 +10,7 @@ import (
 	"strings"
 	_ "github.com/go-sql-driver/mysql"
 	"strconv"
+	"encoding/csv"
 )
 
 func main() {
@@ -30,6 +31,15 @@ func main() {
 	}
 	defer outputfile.Close()
 
+	csvfile, err := os.Create("result.csv")
+	if(err!=nil){
+		fmt.Println("Not able to create a csv file")
+	}
+	defer csvfile.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
 	var line string
 	for {
 		line, err = reader.ReadString('\n')
@@ -43,7 +53,7 @@ func main() {
 		uid := uservalues[0]
         //msisdn := uservalues[1]
         dbConn := getDBConnection()
-		dbConn.SetMaxOpenConns(1000)
+		dbConn.SetMaxOpenConns(10000)
         defer dbConn.Close()
 		err = dbConn.Ping()
 		if err != nil {
@@ -80,6 +90,22 @@ func main() {
 				OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
 					Pdm+"\n")
 
+		records := [][]string{
+			{ToString(userd.Token)+"::"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.UID)+"::"+
+				ToString(userd.AppVersion)+"::"+ToString(userd.DeviceKey)+"::"+ToString(userd.DevID)+"::"+ToIntegerVal(userd.
+				RegTime)+"::"+ToString(userd.DevToken)+"::"+ToIntegerVal(userd.DevTokenUpdateTs)+"::"+ToString(userd.
+				DevVersion)+"::"+ ToString(userd.DevType)+"::"+ToString(userd.Os)+"::"+ToString(userd.OsVersion)+"::"+
+				ToIntegerVal(userd.UpgradeTime)+"::"+ToIntegerVal(userd.LastActivityTime)+"::"+ToStringFromInt(userd.
+				AttributeBits)+"::"+ToString(userd.Sound)+"::"+ToIntegerVal(userd.EndTime)+"::"+ ToString(userd.
+				OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
+				Pdm},
+		}
+		for _, value := range records {
+			err := writer.Write(value)
+			if(err!=nil){
+				fmt.Println("Not able to write the records into csv file")
+			}
+		}
 	}
 
 	if err != io.EOF {
