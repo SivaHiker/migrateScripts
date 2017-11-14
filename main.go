@@ -68,8 +68,17 @@ func main() {
 			//userd.OsVersion,userd.UpgradeTime,userd.LastActivityTime,userd.AttributeBits,userd.Sound,userd.EndTime,
 			//userd.OriginalAppVersion,userd.Operator,userd.Resolution,userd.Circle,userd.Pdm}
 
-		outputfile.WriteString(ToString(userd.Token)+"::"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.
+		outputfile.WriteString(ToString(userd.Token)+"::+"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.
 			Sound)+"::"+ToIntegerVal(userd.UpgradeTime)+"\n")
+
+		outputfile.WriteString(ToString(userd.Token)+"::"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.UID)+"::"+
+		ToString(userd.AppVersion)+"::"+ToString(userd.DeviceKey)+"::"+ToString(userd.DevID)+"::"+ToIntegerVal(userd.
+			RegTime)+"::"+ToString(userd.DevToken)+"::"+ToIntegerVal(userd.DevTokenUpdateTs)+"::"+ToString(userd.
+				DevVersion)+"::"+ ToString(userd.DevType)+"::"+ToString(userd.Os)+"::"+ToString(userd.OsVersion)+"::"+
+		ToIntegerVal(userd.UpgradeTime)+"::"+ToIntegerVal(userd.LastActivityTime)+"::"+ToStringFromInt(userd.
+			AttributeBits)+"::"+ToString(userd.Sound)+"::"+ToIntegerVal(userd.EndTime)+"::"+ ToString(userd.
+				OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
+					Pdm)
 
 	}
 
@@ -94,6 +103,12 @@ func ToNullString(s string) sql.NullString {
 func ToIntegerVal(i int64) string {
 	var valueInt string
 	valueInt = strconv.FormatInt(int64(i), 10)
+	return valueInt
+}
+
+func ToStringFromInt(i int) string {
+	var valueInt string
+	valueInt = strconv.Itoa(i)
 	return valueInt
 }
 
