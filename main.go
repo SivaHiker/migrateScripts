@@ -81,17 +81,30 @@ func main() {
 		//outputfile.WriteString(ToString(userd.Token)+"::+"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.
 		//	Sound)+"::"+ToIntegerVal(userd.UpgradeTime)+"\n")
 
-		outputfile.WriteString(ToString(userd.Token)+"::"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.UID)+"::"+
-		ToString(userd.AppVersion)+"::"+ToString(userd.DeviceKey)+"::"+ToString(userd.DevID)+"::"+ToIntegerVal(userd.
+
+
+		msisdnReqd := ToIntegerVal(userd.Msisdn)
+		if strings.HasPrefix(msisdnReqd,"9") {
+			msisdnReqd=strings.Replace(msisdnReqd,"9","1",1)
+		} else if (strings.HasPrefix(msisdnReqd,"9")) {
+			msisdnReqd=strings.Replace(msisdnReqd,"8","2",1)
+		} else if (strings.HasPrefix(msisdnReqd,"9")) {
+			msisdnReqd=strings.Replace(msisdnReqd,"7","3",1)
+		} else {
+			continue
+		}
+
+		outputfile.WriteString(ToString(userd.Token)+"::"+msisdnReqd+"::"+ToString(userd.UID)+"::"+
+			ToString(userd.AppVersion)+"::"+ToString(userd.DeviceKey)+"::"+ToString(userd.DevID)+"::"+ToIntegerVal(userd.
 			RegTime)+"::"+ToString(userd.DevToken)+"::"+ToIntegerVal(userd.DevTokenUpdateTs)+"::"+ToString(userd.
-				DevVersion)+"::"+ ToString(userd.DevType)+"::"+ToString(userd.Os)+"::"+ToString(userd.OsVersion)+"::"+
-		ToIntegerVal(userd.UpgradeTime)+"::"+ToIntegerVal(userd.LastActivityTime)+"::"+ToStringFromInt(userd.
+			DevVersion)+"::"+ ToString(userd.DevType)+"::"+ToString(userd.Os)+"::"+ToString(userd.OsVersion)+"::"+
+			ToIntegerVal(userd.UpgradeTime)+"::"+ToIntegerVal(userd.LastActivityTime)+"::"+ToStringFromInt(userd.
 			AttributeBits)+"::"+ToString(userd.Sound)+"::"+ToIntegerVal(userd.EndTime)+"::"+ ToString(userd.
-				OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
-					Pdm+"\n")
+			OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
+			Pdm+"\n")
 
 		records := [][]string{
-			{ToString(userd.Token),ToIntegerVal(userd.Msisdn),ToString(userd.UID),
+			{ToString(userd.Token),msisdnReqd,ToString(userd.UID),
 				ToString(userd.AppVersion),ToString(userd.DeviceKey),ToString(userd.DevID),ToIntegerVal(userd.
 				RegTime),ToString(userd.DevToken),ToIntegerVal(userd.DevTokenUpdateTs),ToString(userd.
 				DevVersion), ToString(userd.DevType),ToString(userd.Os),ToString(userd.OsVersion),
