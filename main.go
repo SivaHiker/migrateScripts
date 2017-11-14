@@ -10,6 +10,7 @@ import (
 	"strings"
 	_ "github.com/go-sql-driver/mysql"
 	"strconv"
+	"os/user"
 )
 
 func main() {
@@ -70,8 +71,10 @@ func main() {
 
 		msisdn := strconv.FormatInt(int64(userd.Msisdn), 10)
 		upgradetime := strconv.FormatInt(int64(userd.UpgradeTime), 10)
+		fmt.Println(userd.Sound)
+		fmt.Println(userd.Sound.String)
 
-		outputfile.WriteString(userd.Token+"::"+msisdn+"::"+userd.Sound+"::"+upgradetime)
+		outputfile.WriteString(userd.Token+"::"+msisdn+"::"+userd.Sound.String+"::"+upgradetime+"\n")
 
 	}
 
@@ -109,7 +112,7 @@ type userDetails struct {
 	Pdm                string `json:"pdm"`
 	RegTime            int64    `json:"reg_time"`
 	Resolution         string `json:"resolution"`
-	Sound              string `json:"sound"`
+	Sound              sql.NullString `json:"sound"`
 	Token              string `json:"token"`
 	UID                string `json:"uid"`
 	UpgradeTime        int64    `json:"upgrade_time"`
