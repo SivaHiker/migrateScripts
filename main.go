@@ -65,7 +65,6 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		}
-		defer rows.Close()
 
 		//rows,err := dbConn.Query("select * from devices where  uid=\""+uid+"\"")
 		//if(err!=nil){
@@ -79,6 +78,7 @@ func main() {
 				&userd.OriginalAppVersion, &userd.Operator, &userd.Resolution, &userd.Circle, &userd.Pdm)
 			fmt.Println(err)
 		}
+		rows.Close()
         //userValues ={userd.Token,userd.Msisdn,userd.UID,userd.AppVersion,userd.DeviceKey,userd.DevID,
 			//userd.RegTime,userd.DevToken,userd.DevTokenUpdateTs,userd.DevVersion,userd.DevType,userd.Os,
 			//userd.OsVersion,userd.UpgradeTime,userd.LastActivityTime,userd.AttributeBits,userd.Sound,userd.EndTime,
