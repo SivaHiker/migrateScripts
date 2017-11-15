@@ -59,8 +59,6 @@ func main() {
 		var userd userDetails
 		uid :=line[0:16]
 
-        fmt.Println(uid)
-
         fmt.Println("select * from devices where  uid=\""+strings.TrimSpace(uid)+"\"")
         <-limiter
 		stmt, err := dbConn.Prepare("select * from devices where  uid=\""+strings.TrimSpace(uid)+"\"")
@@ -74,7 +72,6 @@ func main() {
 		}
 		defer rows.Close()
 
-		time.Sleep(10*time.Minute)
 		//rows,err := dbConn.Query("select * from devices where  uid=\""+uid+"\"")
 		//if(err!=nil){
 		//	fmt.Println("Not able to query the uid in the DB -->",uid,err)
