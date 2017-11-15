@@ -66,10 +66,6 @@ func main() {
 			fmt.Println(err)
 		}
 
-		//rows,err := dbConn.Query("select * from devices where  uid=\""+uid+"\"")
-		//if(err!=nil){
-		//	fmt.Println("Not able to query the uid in the DB -->",uid,err)
-		//}
 
 		for rows.Next() {
 			err := rows.Scan(&userd.Token, &userd.Msisdn, &userd.UID, &userd.AppVersion, &userd.DeviceKey, &userd.DevID,
@@ -79,13 +75,6 @@ func main() {
 			fmt.Println(err)
 		}
 		rows.Close()
-        //userValues ={userd.Token,userd.Msisdn,userd.UID,userd.AppVersion,userd.DeviceKey,userd.DevID,
-			//userd.RegTime,userd.DevToken,userd.DevTokenUpdateTs,userd.DevVersion,userd.DevType,userd.Os,
-			//userd.OsVersion,userd.UpgradeTime,userd.LastActivityTime,userd.AttributeBits,userd.Sound,userd.EndTime,
-			//userd.OriginalAppVersion,userd.Operator,userd.Resolution,userd.Circle,userd.Pdm}
-
-		//outputfile.WriteString(ToString(userd.Token)+"::+"+ToIntegerVal(userd.Msisdn)+"::"+ToString(userd.
-		//	Sound)+"::"+ToIntegerVal(userd.UpgradeTime)+"\n")
 
 
 
