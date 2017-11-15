@@ -144,7 +144,7 @@ func main() {
 
 func getDBConnection() *sql.DB{
 
-	db, err := sql.Open("mysql", "platform:p1atf0rmD1$t@tcp(10.15.0.118:3306)/users")
+	db, err := sql.Open("mysql", "platform:p1atf0rmD1$t@tcp(10.9.33.7:3306)/users")
 	if(err!=nil){
 		fmt.Println(err)
 	}
