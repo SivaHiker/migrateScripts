@@ -66,12 +66,22 @@ func main() {
 		uid="WcIvzE_log90rBhX"
         fmt.Println("select * from devices where  uid=\""+uid+"\"")
         <-limiter
-		rows,err := dbConn.Query("select * from devices where  uid=\""+uid+"\"")
-		if(err!=nil){
-			fmt.Println("Not able to query the uid in the DB -->",uid,err)
+		stmt, err := dbConn.Prepare("select * from devices where  uid=\""+uid+"\"")
+		if err != nil {
+			fmt.Println(err)
 		}
+		defer stmt.Close()
+		rows, err := stmt.Query()
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer rows.Close()
+		//rows,err := dbConn.Query("select * from devices where  uid=\""+uid+"\"")
+		//if(err!=nil){
+		//	fmt.Println("Not able to query the uid in the DB -->",uid,err)
+		//}
 
-		if(rows.Next()) {
+		for rows.Next() {
 			err := rows.Scan(&userd.Token, &userd.Msisdn, &userd.UID, &userd.AppVersion, &userd.DeviceKey, &userd.DevID,
 				&userd.RegTime, &userd.DevToken, &userd.DevTokenUpdateTs, &userd.DevVersion, &userd.DevType, &userd.Os,
 				&userd.OsVersion, &userd.UpgradeTime, &userd.LastActivityTime, &userd.AttributeBits, &userd.Sound, &userd.EndTime,
@@ -125,7 +135,6 @@ func main() {
 				fmt.Println("Not able to write the records into csv file")
 			}
 		}
-		rows.Close()
 	}
 
 	if err != io.EOF {
