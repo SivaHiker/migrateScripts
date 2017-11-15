@@ -57,16 +57,13 @@ func main() {
 			break
 		}
 		var userd userDetails
-		//fmt.Printf(" > Read %d characters\n", len(line))
-		//fmt.Println(line)
-		uservalues := strings.Split(line,"+")
-		uid := uservalues[0]
+		uid :=line[0:16]
 
+        fmt.Println(uid)
 
-		uid="WcIvzE_log90rBhX"
-        fmt.Println("select * from devices where  uid=\""+uid+"\"")
+        fmt.Println("select * from devices where  uid=\""+strings.TrimSpace(uid)+"\"")
         <-limiter
-		stmt, err := dbConn.Prepare("select * from devices where  uid=\""+uid+"\"")
+		stmt, err := dbConn.Prepare("select * from devices where  uid=\""+strings.TrimSpace(uid)+"\"")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -76,6 +73,8 @@ func main() {
 			fmt.Println(err)
 		}
 		defer rows.Close()
+
+		time.Sleep(10*time.Minute)
 		//rows,err := dbConn.Query("select * from devices where  uid=\""+uid+"\"")
 		//if(err!=nil){
 		//	fmt.Println("Not able to query the uid in the DB -->",uid,err)
