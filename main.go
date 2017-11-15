@@ -61,12 +61,7 @@ func main() {
 
         fmt.Println("select * from devices where  uid=\""+strings.TrimSpace(uid)+"\"")
         <-limiter
-		stmt, err := dbConn.Prepare("select * from devices where  uid=\""+strings.TrimSpace(uid)+"\"")
-		if err != nil {
-			fmt.Println(err)
-		}
-		defer stmt.Close()
-		rows, err := stmt.Query()
+		rows, err := dbConn.Query("select * from devices where  uid=\""+strings.TrimSpace(uid)+"\"")
 		if err != nil {
 			fmt.Println(err)
 		}
