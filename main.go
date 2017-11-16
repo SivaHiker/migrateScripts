@@ -2,7 +2,6 @@ package main
 
 
 import (
-	"io"
 	"fmt"
 	"os"
 	"bufio"
@@ -16,7 +15,8 @@ import (
 
 func main() {
 
-	file, err := os.Open("/home/siva/LatestAppOpenUsers_20170512_to_20171107.txt")
+	var recordsCount int64
+	file, err := os.Open("/Users/siva/Downloads/LatestAppOpenUsers_20170512_to_20171107.txt")
 	defer file.Close()
 
 	if err != nil {
@@ -24,7 +24,7 @@ func main() {
 	}
 
 	dbConn := getDBConnection()
-	dbConn.SetMaxOpenConns(10000)
+	dbConn.SetMaxOpenConns(10)
 
 	defer dbConn.Close()
 	err = dbConn.Ping()
@@ -48,20 +48,33 @@ func main() {
 	writer := csv.NewWriter(csvfile)
 	defer writer.Flush()
 	defer csvfile.Close()
-	limiter := time.Tick(time.Nanosecond * 1000000)
+	limiter := time.Tick(time.Nanosecond * 333333333)
 
 	var line string
+	var linecount int
 	for {
-		line, err = reader.ReadString('\n')
-		if err != nil {
-			break
-		}
+		linecount =0
 		var userd userDetails
-		uid :=line[0:16]
+		lines := make([]string, 2000)
+        query := ""
+		for linecount<1000 {
+			line, err = reader.ReadString('\n')
+			if err != nil {
+				break
+			}
+			uid :=line[0:16]
+			lines = append(lines,uid)
+			if linecount == 0 {
+				query = query + "\"" + strings.TrimSpace(uid) + "\""
+			} else {
+				query = query + ",\"" + strings.TrimSpace(uid) + "\""
+			}
+			linecount++
+		}
 
-        fmt.Println("select * from devices where  uid=\""+strings.TrimSpace(uid)+"\"")
-        <-limiter
-		rows, err := dbConn.Query("select * from devices where  uid=\""+strings.TrimSpace(uid)+"\"")
+        fmt.Println("select * from devices where  uid in ("+query+")")
+		<-limiter
+		rows, err := dbConn.Query("select * from devices where  uid in ("+query+")")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -73,53 +86,52 @@ func main() {
 				&userd.OsVersion, &userd.UpgradeTime, &userd.LastActivityTime, &userd.AttributeBits, &userd.Sound, &userd.EndTime,
 				&userd.OriginalAppVersion, &userd.Operator, &userd.Resolution, &userd.Circle, &userd.Pdm)
 			fmt.Println(err)
+			msisdnReqd := ToIntegerVal(userd.Msisdn)
+			if strings.HasPrefix(msisdnReqd,"9") {
+				msisdnReqd=strings.Replace(msisdnReqd,"9","1",1)
+			} else if (strings.HasPrefix(msisdnReqd,"9")) {
+				msisdnReqd=strings.Replace(msisdnReqd,"8","2",1)
+			} else if (strings.HasPrefix(msisdnReqd,"9")) {
+				msisdnReqd=strings.Replace(msisdnReqd,"7","3",1)
+			} else {
+				continue
+			}
+			recordsCount++
+			outputfile.WriteString(ToString(userd.Token)+"::"+msisdnReqd+"::"+ToString(userd.UID)+"::"+
+				ToString(userd.AppVersion)+"::"+ToString(userd.DeviceKey)+"::"+ToString(userd.DevID)+"::"+ToIntegerVal(userd.
+				RegTime)+"::"+ToString(userd.DevToken)+"::"+ToIntegerVal(userd.DevTokenUpdateTs)+"::"+ToString(userd.
+				DevVersion)+"::"+ ToString(userd.DevType)+"::"+ToString(userd.Os)+"::"+ToString(userd.OsVersion)+"::"+
+				ToIntegerVal(userd.UpgradeTime)+"::"+ToIntegerVal(userd.LastActivityTime)+"::"+ToStringFromInt(userd.
+				AttributeBits)+"::"+ToString(userd.Sound)+"::"+ToIntegerVal(userd.EndTime)+"::"+ ToString(userd.
+				OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
+				Pdm+"\n")
+
+			records := [][]string{
+				{ToString(userd.Token),msisdnReqd,ToString(userd.UID),
+					ToString(userd.AppVersion),ToString(userd.DeviceKey),ToString(userd.DevID),ToIntegerVal(userd.
+					RegTime),ToString(userd.DevToken),ToIntegerVal(userd.DevTokenUpdateTs),ToString(userd.
+					DevVersion), ToString(userd.DevType),ToString(userd.Os),ToString(userd.OsVersion),
+					ToIntegerVal(userd.UpgradeTime),ToIntegerVal(userd.LastActivityTime),ToStringFromInt(userd.
+					AttributeBits),ToString(userd.Sound),ToIntegerVal(userd.EndTime), ToString(userd.
+					OriginalAppVersion),userd.Operator,userd.Resolution,ToStringFromInt(userd.Circle),userd.
+					Pdm},
+			}
+			for _, value := range records {
+				err := writer.Write(value)
+				if(err!=nil){
+					fmt.Println(err.Error())
+					fmt.Println("Not able to write the records into csv file")
+				}
+			}
 		}
 		rows.Close()
 
-
-
-		msisdnReqd := ToIntegerVal(userd.Msisdn)
-		if strings.HasPrefix(msisdnReqd,"9") {
-			msisdnReqd=strings.Replace(msisdnReqd,"9","1",1)
-		} else if (strings.HasPrefix(msisdnReqd,"9")) {
-			msisdnReqd=strings.Replace(msisdnReqd,"8","2",1)
-		} else if (strings.HasPrefix(msisdnReqd,"9")) {
-			msisdnReqd=strings.Replace(msisdnReqd,"7","3",1)
-		} else {
-			continue
-		}
-
-		outputfile.WriteString(ToString(userd.Token)+"::"+msisdnReqd+"::"+ToString(userd.UID)+"::"+
-			ToString(userd.AppVersion)+"::"+ToString(userd.DeviceKey)+"::"+ToString(userd.DevID)+"::"+ToIntegerVal(userd.
-			RegTime)+"::"+ToString(userd.DevToken)+"::"+ToIntegerVal(userd.DevTokenUpdateTs)+"::"+ToString(userd.
-			DevVersion)+"::"+ ToString(userd.DevType)+"::"+ToString(userd.Os)+"::"+ToString(userd.OsVersion)+"::"+
-			ToIntegerVal(userd.UpgradeTime)+"::"+ToIntegerVal(userd.LastActivityTime)+"::"+ToStringFromInt(userd.
-			AttributeBits)+"::"+ToString(userd.Sound)+"::"+ToIntegerVal(userd.EndTime)+"::"+ ToString(userd.
-			OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
-			Pdm+"\n")
-
-		records := [][]string{
-			{ToString(userd.Token),msisdnReqd,ToString(userd.UID),
-				ToString(userd.AppVersion),ToString(userd.DeviceKey),ToString(userd.DevID),ToIntegerVal(userd.
-				RegTime),ToString(userd.DevToken),ToIntegerVal(userd.DevTokenUpdateTs),ToString(userd.
-				DevVersion), ToString(userd.DevType),ToString(userd.Os),ToString(userd.OsVersion),
-				ToIntegerVal(userd.UpgradeTime),ToIntegerVal(userd.LastActivityTime),ToStringFromInt(userd.
-				AttributeBits),ToString(userd.Sound),ToIntegerVal(userd.EndTime), ToString(userd.
-				OriginalAppVersion),userd.Operator,userd.Resolution,ToStringFromInt(userd.Circle),userd.
-				Pdm},
-		}
-		for _, value := range records {
-			err := writer.Write(value)
-			if(err!=nil){
-				fmt.Println(err.Error())
-				fmt.Println("Not able to write the records into csv file")
-			}
-		}
+		//if err != io.EOF {
+		//	fmt.Printf(" > Failed!: %v\n", err)
+		//}
 	}
+	fmt.Println("Number of records exported from the DB",recordsCount)
 
-	if err != io.EOF {
-		fmt.Printf(" > Failed!: %v\n", err)
-	}
 }
 
 func getDBConnection() *sql.DB{
