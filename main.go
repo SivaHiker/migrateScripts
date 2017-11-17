@@ -18,7 +18,7 @@ import (
 func main() {
 
 	var recordsCount int64
-	file, err := os.Open("/Users/siva/Downloads/siva.txt")
+	file, err := os.Open("/home/siva/LatestAppOpenUsers_20170512_to_20171107.txt")
 	defer file.Close()
 
 	if err != nil {
