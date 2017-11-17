@@ -36,11 +36,11 @@ func main() {
 	// Start reading from the file with a reader.
 	reader := bufio.NewReader(file)
 
-	outputfile, err := os.Create("text.txt")
-     if(err!=nil){
-     	fmt.Println("Not able to create a file")
-	}
-	defer outputfile.Close()
+	//outputfile, err := os.Create("text.txt")
+     //if(err!=nil){
+     //	fmt.Println("Not able to create a file")
+	//}
+	//defer outputfile.Close()
 
 	csvfile, err := os.Create("result.csv")
 	if(err!=nil){
