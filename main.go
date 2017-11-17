@@ -11,12 +11,14 @@ import (
 	"strconv"
 	"encoding/csv"
 	"time"
+	"bytes"
+	"io"
 )
 
 func main() {
 
 	var recordsCount int64
-	file, err := os.Open("/home/siva/LatestAppOpenUsers_20170512_to_20171107.txt")
+	file, err := os.Open("/Users/siva/Downloads/siva.txt")
 	defer file.Close()
 
 	if err != nil {
@@ -50,26 +52,36 @@ func main() {
 	defer csvfile.Close()
 	limiter := time.Tick(time.Nanosecond * 333333333)
 
-	var line string
 	var linecount int
 	for {
 		linecount =0
 		var userd userDetails
 		lines := make([]string, 2000)
         query := ""
-		for linecount<1000 {
-			line, err = reader.ReadString('\n')
+		for linecount<10 {
+			var buffer bytes.Buffer
+			var line []byte
+			line, _, err = reader.ReadLine()
+			buffer.Write(line)
+			println(buffer.String())
+			// If we're just at the EOF, break
 			if err != nil {
-				break
-			}
-			uid :=line[0:16]
-			lines = append(lines,uid)
-			if linecount == 0 {
-				query = query + "\"" + strings.TrimSpace(uid) + "\""
+				if query=="" {
+					os.Exit(1)
+				} else {
+					break
+				}
 			} else {
-				query = query + ",\"" + strings.TrimSpace(uid) + "\""
+				uidString := string(line[:])
+				uid :=uidString[0:16]
+				lines = append(lines,uid)
+				if linecount == 0 {
+					query = query + "\"" + strings.TrimSpace(uid) + "\""
+				} else {
+					query = query + ",\"" + strings.TrimSpace(uid) + "\""
+				}
+				linecount++
 			}
-			linecount++
 		}
 
         fmt.Println("select * from devices where  uid in ("+query+")")
@@ -97,14 +109,14 @@ func main() {
 				continue
 			}
 			recordsCount++
-			outputfile.WriteString(ToString(userd.Token)+"::"+msisdnReqd+"::"+ToString(userd.UID)+"::"+
-				ToString(userd.AppVersion)+"::"+ToString(userd.DeviceKey)+"::"+ToString(userd.DevID)+"::"+ToIntegerVal(userd.
-				RegTime)+"::"+ToString(userd.DevToken)+"::"+ToIntegerVal(userd.DevTokenUpdateTs)+"::"+ToString(userd.
-				DevVersion)+"::"+ ToString(userd.DevType)+"::"+ToString(userd.Os)+"::"+ToString(userd.OsVersion)+"::"+
-				ToIntegerVal(userd.UpgradeTime)+"::"+ToIntegerVal(userd.LastActivityTime)+"::"+ToStringFromInt(userd.
-				AttributeBits)+"::"+ToString(userd.Sound)+"::"+ToIntegerVal(userd.EndTime)+"::"+ ToString(userd.
-				OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
-				Pdm+"\n")
+			//outputfile.WriteString(ToString(userd.Token)+"::"+msisdnReqd+"::"+ToString(userd.UID)+"::"+
+			//	ToString(userd.AppVersion)+"::"+ToString(userd.DeviceKey)+"::"+ToString(userd.DevID)+"::"+ToIntegerVal(userd.
+			//	RegTime)+"::"+ToString(userd.DevToken)+"::"+ToIntegerVal(userd.DevTokenUpdateTs)+"::"+ToString(userd.
+			//	DevVersion)+"::"+ ToString(userd.DevType)+"::"+ToString(userd.Os)+"::"+ToString(userd.OsVersion)+"::"+
+			//	ToIntegerVal(userd.UpgradeTime)+"::"+ToIntegerVal(userd.LastActivityTime)+"::"+ToStringFromInt(userd.
+			//	AttributeBits)+"::"+ToString(userd.Sound)+"::"+ToIntegerVal(userd.EndTime)+"::"+ ToString(userd.
+			//	OriginalAppVersion)+"::"+userd.Operator+"::"+userd.Resolution+"::"+ToStringFromInt(userd.Circle)+"::"+userd.
+			//	Pdm+"\n")
 
 			records := [][]string{
 				{ToString(userd.Token),msisdnReqd,ToString(userd.UID),
@@ -116,6 +128,7 @@ func main() {
 					OriginalAppVersion),userd.Operator,userd.Resolution,ToStringFromInt(userd.Circle),userd.
 					Pdm},
 			}
+
 			for _, value := range records {
 				err := writer.Write(value)
 				if(err!=nil){
@@ -124,13 +137,18 @@ func main() {
 				}
 			}
 		}
-		rows.Close()
+		errClose :=rows.Close()
+         if(errClose!=nil){
+         	fmt.Println(errClose.Error())
+		 }
 
-		//if err != io.EOF {
-		//	fmt.Printf(" > Failed!: %v\n", err)
-		//}
+		fmt.Println("Number of records exported from the DB",recordsCount)
+
 	}
 	fmt.Println("Number of records exported from the DB",recordsCount)
+	if err != io.EOF {
+		fmt.Printf(" > Failed!: %v\n", err)
+	}
 
 }
 
@@ -163,10 +181,10 @@ func ToString(s sql.NullString) string {
 	var valInString string
 	if(s.Valid) {
 		valInString = s.String
-		fmt.Println(valInString)
+		//fmt.Println(valInString)
 	} else {
 		valInString = "NULL"
-		fmt.Println(valInString)
+		//fmt.Println(valInString)
 	}
 	return valInString
 }
