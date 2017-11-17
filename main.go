@@ -67,6 +67,7 @@ func main() {
 			// If we're just at the EOF, break
 			if err != nil {
 				if query=="" {
+					fmt.Println("Final Number of records exported from the DB",recordsCount)
 					os.Exit(1)
 				} else {
 					break
@@ -145,7 +146,7 @@ func main() {
 		fmt.Println("Number of records exported from the DB",recordsCount)
 
 	}
-	fmt.Println("Number of records exported from the DB",recordsCount)
+
 	if err != io.EOF {
 		fmt.Printf(" > Failed!: %v\n", err)
 	}
