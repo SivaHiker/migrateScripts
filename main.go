@@ -58,7 +58,7 @@ func main() {
 		var userd userDetails
 		lines := make([]string, 2000)
         query := ""
-		for linecount<10 {
+		for linecount<1000 {
 			var buffer bytes.Buffer
 			var line []byte
 			line, _, err = reader.ReadLine()
